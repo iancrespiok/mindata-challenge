@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: hotel-search-app
+
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@//oracle:1521/MINDATA_CHALLENGE_DB}
+    username: ${DB_USER:hotel_search}
+    password: ${DB_PASSWORD:hotel_search}
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+    consumer:
+      group-id: hotel-search-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: com.ian.challenge.infrastructure.adapter.out.kafka.message
+        spring.json.value.default.type: com.ian.challenge.infrastructure.adapter.out.kafka.message.SearchAvailabilityMessage
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.example.hotelsearch: INFO
