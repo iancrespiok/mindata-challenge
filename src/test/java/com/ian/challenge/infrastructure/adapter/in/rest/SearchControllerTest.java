@@ -1,4 +1,4 @@
-package com.ian.challenge.infrastructure.in.rest;
+package com.ian.challenge.infrastructure.adapter.in.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.challenge.Fixture;
 import com.ian.challenge.domain.exception.SearchNotFoundException;

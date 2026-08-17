@@ -1,11 +1,10 @@
-package com.ian.challenge.infrastructure.out.persistence;
+package com.ian.challenge.infrastructure.adapter.out.persistence;
 
 
 import com.ian.challenge.domain.model.SearchCriteria;
 import com.ian.challenge.domain.model.SearchId;
 import com.ian.challenge.domain.model.SearchRecord;
 import com.ian.challenge.Fixture;
-import com.ian.challenge.infrastructure.adapter.out.persistence.SearchPersistenceAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

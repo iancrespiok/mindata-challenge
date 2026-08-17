@@ -1,7 +1,6 @@
-package com.ian.challenge.infrastructure.out.kafka.consumer;
+package com.ian.challenge.infrastructure.adapter.out.kafka.consumer;
 
 import com.ian.challenge.domain.model.SearchRecord;
-import com.ian.challenge.infrastructure.adapter.out.kafka.consumer.SearchConsumerMessageMapper;
 import com.ian.challenge.infrastructure.adapter.out.kafka.message.SearchAvailabilityMessage;
 import org.junit.jupiter.api.Test;
 

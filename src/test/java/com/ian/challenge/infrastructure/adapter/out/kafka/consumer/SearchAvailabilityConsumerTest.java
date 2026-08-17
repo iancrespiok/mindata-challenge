@@ -12,16 +12,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,41 +25,29 @@ class SearchAvailabilityConsumerTest {
     private SearchRepository searchRepository;
 
     @Test
-    void dispatchesMessagePersistenceToVirtualThreadExecutor() throws InterruptedException {
-        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    void persistsMessageSynchronously() {
         SearchConsumerMessageMapper mapper = new SearchConsumerMessageMapper();
-        SearchAvailabilityConsumer consumer = new SearchAvailabilityConsumer(searchRepository, mapper, executor);
+        SearchAvailabilityConsumer consumer = new SearchAvailabilityConsumer(searchRepository, mapper);
 
         SearchAvailabilityMessage message = new SearchAvailabilityMessage(
                 "abc-123", "1234aBc", "2023-12-29", "2023-12-31", List.of(30, 29, 1, 3), Instant.now());
 
         consumer.onMessage(message);
 
-        verify(searchRepository, timeout(2000)).save(any(SearchRecord.class));
-        executor.shutdown();
-        assertTrue(executor.awaitTermination(2, TimeUnit.SECONDS));
+        verify(searchRepository).save(any(SearchRecord.class));
     }
 
     @Test
-    void swallowsAndLogsPersistenceFailures() throws InterruptedException {
-        ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    void propagatesExceptionSoRetryableTopicCanCatchIt() {
         SearchConsumerMessageMapper mapper = new SearchConsumerMessageMapper();
-        SearchAvailabilityConsumer consumer = new SearchAvailabilityConsumer(searchRepository, mapper, executor);
+        SearchAvailabilityConsumer consumer = new SearchAvailabilityConsumer(searchRepository, mapper);
 
         doThrow(new RuntimeException("db down")).when(searchRepository).save(any());
 
         SearchAvailabilityMessage message = new SearchAvailabilityMessage(
                 "abc-123", "hotel", "2023-12-29", "2023-12-31", List.of(1), Instant.now());
 
-        CountDownLatch latch = new CountDownLatch(1);
-        consumer.onMessage(message);
-        executor.submit(latch::countDown);
-
-        assertAll(
-                () -> assertTrue(latch.await(2, TimeUnit.SECONDS)),
-                () -> verify(searchRepository, timeout(2000)).save(any())
-        );
-        executor.shutdown();
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> consumer.onMessage(message));
+        assertEquals("db down", thrown.getMessage());
     }
 }
-

@@ -1,4 +1,4 @@
-package com.ian.challenge.infrastructure.in.rest.dto;
+package com.ian.challenge.infrastructure.adapter.in.rest.dto;
 
 import com.ian.challenge.Fixture;
 import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchRequestDTO;
