@@ -24,7 +24,7 @@ services:
       retries: 10
 
   postgres:
-    image: postgres:16-alpine
+    image: ghcr.io/suda/docker-postgres-pg-cron:16-alpine
     container_name: hotel-search-postgres
     ports:
       - "5432:5432"
@@ -32,14 +32,16 @@ services:
       POSTGRES_DB: MINDATA_CHALLENGE_DB
       POSTGRES_USER: hotel_search
       POSTGRES_PASSWORD: hotel_search
+    command: postgres -c shared_preload_libraries=pg_cron -c cron.database_name=MINDATA_CHALLENGE_DB
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hotel_search -d MINDATA_CHALLENGE_DB"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 10s
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
 
   app:
     build:
