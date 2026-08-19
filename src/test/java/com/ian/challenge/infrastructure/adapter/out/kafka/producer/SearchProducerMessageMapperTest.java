@@ -21,8 +21,8 @@ class SearchProducerMessageMapperTest {
 
     @Test
     void mapsDomainRecordToWireMessage() {
-        SearchCriteria criteria = Fixture.defaultCriteria();
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchCriteria searchCriteria = Fixture.defaultCriteria();
+        SearchRecord record = Fixture.recordWithCriteria(searchCriteria);
 
         SearchAvailabilityMessage message = mapper.toMessage(record);
 

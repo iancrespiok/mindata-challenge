@@ -45,8 +45,8 @@ class SearchRestMapperTest {
 
     @Test
     void mapsRecordAndCountToCountResponse() {
-        SearchCriteria criteria = Fixture.criteriaWithAges(List.of(3, 29, 30, 1));
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchCriteria searchCriteria = Fixture.criteriaWithAges(List.of(3, 29, 30, 1));
+        SearchRecord record = Fixture.recordWithCriteria(searchCriteria);
 
         SearchCountResponseDTO response = mapper.toCountResponse(record, 100L);
 

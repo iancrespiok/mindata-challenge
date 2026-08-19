@@ -31,16 +31,16 @@ class KafkaSearchEventPublisherTest {
         KafkaSearchEventPublisher publisher = new KafkaSearchEventPublisher(kafkaTemplate, mapper);
 
         SearchCriteria criteria = Fixture.defaultCriteria();
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchRecord searchRecord = Fixture.recordWithCriteria(criteria);
 
         CompletableFuture<SendResult<String, SearchAvailabilityMessage>> future = new CompletableFuture<>();
         future.complete(null);
-        when(kafkaTemplate.send(eq(KafkaSearchEventPublisher.TOPIC), eq(record.searchId().value()), any()))
+        when(kafkaTemplate.send(eq(KafkaSearchEventPublisher.TOPIC), eq(searchRecord.searchId().value()), any()))
                 .thenReturn(future);
 
-        publisher.publish(record);
+        publisher.publish(searchRecord);
 
-        verify(kafkaTemplate).send(eq(KafkaSearchEventPublisher.TOPIC), eq(record.searchId().value()), any());
+        verify(kafkaTemplate).send(eq(KafkaSearchEventPublisher.TOPIC), eq(searchRecord.searchId().value()), any());
     }
 
     @Test
@@ -49,15 +49,15 @@ class KafkaSearchEventPublisherTest {
         KafkaSearchEventPublisher publisher = new KafkaSearchEventPublisher(kafkaTemplate, mapper);
 
         SearchCriteria criteria = Fixture.shortWindowCriteria(List.of(1));
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchRecord searchRecord = Fixture.recordWithCriteria(criteria);
 
         CompletableFuture<SendResult<String, SearchAvailabilityMessage>> future = new CompletableFuture<>();
         future.completeExceptionally(new RuntimeException("broker down"));
-        when(kafkaTemplate.send(eq(KafkaSearchEventPublisher.TOPIC), eq(record.searchId().value()), any()))
+        when(kafkaTemplate.send(eq(KafkaSearchEventPublisher.TOPIC), eq(searchRecord.searchId().value()), any()))
                 .thenReturn(future);
 
-        publisher.publish(record);
+        publisher.publish(searchRecord);
 
-        verify(kafkaTemplate).send(eq(KafkaSearchEventPublisher.TOPIC), eq(record.searchId().value()), any());
+        verify(kafkaTemplate).send(eq(KafkaSearchEventPublisher.TOPIC), eq(searchRecord.searchId().value()), any());
     }
 }

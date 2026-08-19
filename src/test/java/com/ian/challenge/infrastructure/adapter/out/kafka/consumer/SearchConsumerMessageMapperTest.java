@@ -26,15 +26,15 @@ class SearchConsumerMessageMapperTest {
         SearchAvailabilityMessage message = new SearchAvailabilityMessage(
                 "abc-123", "1234aBc", CHECK_IN.format(ISO), CHECK_OUT.format(ISO), List.of(30, 29, 1, 3), Instant.now());
 
-        SearchRecord record = mapper.toDomain(message);
+        SearchRecord searchRecord = mapper.toDomain(message);
 
         assertAll("registro de dominio a partir del mensaje recibido",
-                () -> assertEquals("abc-123", record.searchId().value()),
-                () -> assertEquals("1234aBc", record.criteria().hotelId()),
-                () -> assertEquals(CHECK_IN, record.criteria().checkIn()),
-                () -> assertEquals(CHECK_OUT, record.criteria().checkOut()),
-                () -> assertIterableEquals(List.of(30, 29, 1, 3), record.criteria().ages()),
-                () -> assertEquals(message.registeredAt(), record.registeredAt())
+                () -> assertEquals("abc-123", searchRecord.searchId().value()),
+                () -> assertEquals("1234aBc", searchRecord.criteria().hotelId()),
+                () -> assertEquals(CHECK_IN, searchRecord.criteria().checkIn()),
+                () -> assertEquals(CHECK_OUT, searchRecord.criteria().checkOut()),
+                () -> assertIterableEquals(List.of(30, 29, 1, 3), searchRecord.criteria().ages()),
+                () -> assertEquals(message.registeredAt(), searchRecord.registeredAt())
         );
     }
 }

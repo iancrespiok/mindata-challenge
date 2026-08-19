@@ -17,12 +17,12 @@ class SearchRecordTest {
     @Test
     void newSearchAssignsIdAndTimestamp() {
         SearchCriteria criteria = new SearchCriteria("hotel", LocalDate.now(), LocalDate.now().plusDays(2), List.of(30));
-        SearchRecord record = SearchRecord.newSearch(criteria);
+        SearchRecord searchRecord = SearchRecord.newSearch(criteria);
 
         assertAll("a new SearchRecord is created",
-                () -> assertFalse(record.searchId().value().isBlank()),
-                () -> assertEquals(criteria, record.criteria()),
-                () -> assertNotNull(record.registeredAt())
+                () -> assertFalse(searchRecord.searchId().value().isBlank()),
+                () -> assertEquals(criteria, searchRecord.criteria()),
+                () -> assertNotNull(searchRecord.registeredAt())
         );
     }
 

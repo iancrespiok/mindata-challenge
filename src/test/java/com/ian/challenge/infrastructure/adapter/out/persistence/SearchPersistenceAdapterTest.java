@@ -28,10 +28,10 @@ class SearchPersistenceAdapterTest {
     @Test
     void savesAndFindsBySearchId() {
         SearchCriteria criteria = Fixture.defaultCriteria();
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchRecord searchRecord = Fixture.recordWithCriteria(criteria);
 
-        adapter.save(record);
-        Optional<SearchRecord> found = adapter.findById(record.searchId());
+        adapter.save(searchRecord);
+        Optional<SearchRecord> found = adapter.findById(searchRecord.searchId());
 
         assertAll("persisted search is as been saved",
                 () -> assertTrue(found.isPresent()),
@@ -89,14 +89,14 @@ class SearchPersistenceAdapterTest {
     void hotelIdWithSqlMetacharactersIsTreatedAsLiteralData() {
         String maliciousHotelId = "abc'; DROP TABLE hotel_search; --";
         SearchCriteria criteria = Fixture.criteriaWithHotelId(maliciousHotelId);
-        SearchRecord record = Fixture.recordWithCriteria(criteria);
+        SearchRecord searchRecord = Fixture.recordWithCriteria(criteria);
 
-        adapter.save(record);
+        adapter.save(searchRecord);
 
         assertAll("value persists as string, without executing SQL",
                 () -> assertEquals(1L, adapter.countByCriteria(criteria)),
                 () -> assertEquals(maliciousHotelId,
-                        adapter.findById(record.searchId()).orElseThrow().criteria().hotelId())
+                        adapter.findById(searchRecord.searchId()).orElseThrow().criteria().hotelId())
         );
     }
 }
