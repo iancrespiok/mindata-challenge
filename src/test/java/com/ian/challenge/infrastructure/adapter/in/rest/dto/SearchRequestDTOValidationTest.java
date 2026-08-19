@@ -1,7 +1,6 @@
 package com.ian.challenge.infrastructure.adapter.in.rest.dto;
 
 import com.ian.challenge.Fixture;
-import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchRequestDTO;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

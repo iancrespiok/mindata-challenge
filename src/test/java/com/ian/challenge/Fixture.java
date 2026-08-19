@@ -7,12 +7,15 @@ import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchRequestDTO;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Fixture {
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     public static final String DEFAULT_HOTEL_ID = "1234aBc";
-    public static final LocalDate DEFAULT_CHECK_IN = LocalDate.of(2023, 12, 29);
-    public static final LocalDate DEFAULT_CHECK_OUT = LocalDate.of(2023, 12, 31);
+    public static final LocalDate DEFAULT_CHECK_IN = LocalDate.now().plusDays(30);
+    public static final LocalDate DEFAULT_CHECK_OUT = LocalDate.now().plusDays(32);
     public static final List<Integer> DEFAULT_AGES = List.of(30, 29, 1, 3);
 
     private Fixture() {
@@ -47,16 +50,17 @@ public class Fixture {
     }
 
     public static SearchRequestDTO defaultRequestDto() {
-        return new SearchRequestDTO("1234aBc", "29/12/2023", "31/12/2023", List.of(30, 29, 1, 3));
+        return new SearchRequestDTO(DEFAULT_HOTEL_ID, DEFAULT_CHECK_IN.format(DATE_FORMAT),
+                DEFAULT_CHECK_OUT.format(DATE_FORMAT), DEFAULT_AGES);
     }
 
     public static final String DEFAULT_REQUEST_JSON = """
-        {
-          "hotelId": "1234aBc",
-          "checkIn": "29/12/2023",
-          "checkOut": "31/12/2023",
-          "ages": [30, 29, 1, 3]
-        }
-        """;
+            {
+              "hotelId": "%s",
+              "checkIn": "%s",
+              "checkOut": "%s",
+              "ages": [30, 29, 1, 3]
+            }
+            """.formatted(DEFAULT_HOTEL_ID, DEFAULT_CHECK_IN.format(DATE_FORMAT), DEFAULT_CHECK_OUT.format(DATE_FORMAT));
 }
 

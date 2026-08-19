@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SearchCriteriaTest {
 
-    private static final LocalDate CHECK_IN = LocalDate.of(2023, 12, 29);
-    private static final LocalDate CHECK_OUT = LocalDate.of(2023, 12, 31);
+    private static final LocalDate CHECK_IN = LocalDate.now().plusDays(30);
+    private static final LocalDate CHECK_OUT = LocalDate.now().plusDays(32);
 
     @Test
     void agesListIsImmutableAndDefensivelyCopied() {
@@ -89,7 +89,7 @@ class SearchCriteriaTest {
     @Test
     void rejectsCheckInEqualToCheckOut() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> new SearchCriteria("Hotel", CHECK_IN, CHECK_IN, List.of(1)));
+                () -> new SearchCriteria("hotel", CHECK_IN, CHECK_IN, List.of(1)));
         assertTrue(ex.getMessage().contains("Check in"));
     }
 
@@ -107,5 +107,19 @@ class SearchCriteriaTest {
                 () -> assertEquals(CHECK_OUT, criteria.checkOut())
         );
     }
-}
 
+    @Test
+    void rejectsPastCheckIn() {
+        LocalDate pastCheckIn = LocalDate.now().minusDays(1);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> new SearchCriteria("hotel", pastCheckIn, CHECK_OUT, List.of(1)));
+        assertTrue(ex.getMessage().contains("Check in"));
+    }
+
+    @Test
+    void acceptsCheckInEqualToToday() {
+        LocalDate today = LocalDate.now();
+        SearchCriteria criteria = new SearchCriteria("hotel", today, today.plusDays(1), List.of(1));
+        assertEquals(today, criteria.checkIn());
+    }
+}

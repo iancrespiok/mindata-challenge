@@ -18,6 +18,9 @@ public record SearchCriteria(String hotelId, LocalDate checkIn, LocalDate checkO
         if (ages.isEmpty()) {
             throw new IllegalArgumentException("Ages cannot be empty.");
         }
+        if (checkIn.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Check in date cannot be in the past");
+        }
         if (!checkIn.isBefore(checkOut)) {
             throw new IllegalArgumentException("Check in date must be before check out date.");
         }

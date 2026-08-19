@@ -1,8 +1,8 @@
 package com.ian.challenge.infrastructure.adapter.in.rest;
 
 import com.ian.challenge.domain.model.SearchId;
-import com.ian.challenge.domain.port.in.GetSearchCountUseCase;
-import com.ian.challenge.domain.port.in.RegisterSearchUseCase;
+import com.ian.challenge.application.port.in.GetSearchCountUseCase;
+import com.ian.challenge.application.port.in.RegisterSearchUseCase;
 import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchCountResponseDTO;
 import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchRequestDTO;
 import com.ian.challenge.infrastructure.adapter.in.rest.dto.SearchResponseDTO;

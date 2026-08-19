@@ -1,14 +1,13 @@
 package com.ian.challenge.infrastructure.adapter.in.rest;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.challenge.Fixture;
 import com.ian.challenge.domain.exception.SearchNotFoundException;
 import com.ian.challenge.domain.model.SearchCriteria;
 import com.ian.challenge.domain.model.SearchId;
 import com.ian.challenge.domain.model.SearchRecord;
-import com.ian.challenge.domain.port.in.GetSearchCountUseCase;
-import com.ian.challenge.domain.port.in.RegisterSearchUseCase;
-import com.ian.challenge.infrastructure.adapter.in.rest.SearchController;
-import com.ian.challenge.infrastructure.adapter.in.rest.SearchRestMapper;
+import com.ian.challenge.application.port.in.GetSearchCountUseCase;
+import com.ian.challenge.application.port.in.RegisterSearchUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,8 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SearchRestMapper.class)
 class SearchControllerTest {
 
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private RegisterSearchUseCase registerSearchUseCase;
@@ -70,11 +75,12 @@ class SearchControllerTest {
         String body = """
                 {
                   "hotelId": "1234aBc",
-                  "checkIn": "29/12/2023",
-                  "checkOut": "31/12/2023",
+                  "checkIn": "%s",
+                  "checkOut": "%s",
                   "ages": [30, -1]
                 }
-                """;
+                """.formatted(Fixture.DEFAULT_CHECK_IN.format(DATE_FORMAT),
+                Fixture.DEFAULT_CHECK_OUT.format(DATE_FORMAT));
 
         mockMvc.perform(post("/search").contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isBadRequest());
@@ -83,16 +89,18 @@ class SearchControllerTest {
     @Test
     void searchRejectsCheckInNotBeforeCheckOut() throws Exception {
         when(registerSearchUseCase.registerSearch(any()))
-                .thenThrow(new IllegalArgumentException("checkIn must be before checkOut"));
+                .thenThrow(new IllegalArgumentException("Check in date must be before check out date."));
+
+        String sameDate = Fixture.DEFAULT_CHECK_IN.format(DATE_FORMAT);
 
         String body = """
-                {
-                  "hotelId": "1234aBc",
-                  "checkIn": "29/12/2023",
-                  "checkOut": "29/12/2023",
-                  "ages": [30]
-                }
-                """;
+            {
+              "hotelId": "1234aBc",
+              "checkIn": "%s",
+              "checkOut": "%s",
+              "ages": [30]
+            }
+            """.formatted(sameDate, sameDate);
 
         mockMvc.perform(post("/search").contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isBadRequest())

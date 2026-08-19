@@ -1,4 +1,4 @@
-package com.ian.challenge.domain.port.in;
+package com.ian.challenge.application.port.in;
 
 import com.ian.challenge.domain.model.SearchCriteria;
 import com.ian.challenge.domain.model.SearchId;

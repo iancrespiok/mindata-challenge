@@ -6,7 +6,7 @@ import com.ian.challenge.domain.exception.SearchNotFoundException;
 import com.ian.challenge.domain.model.SearchCriteria;
 import com.ian.challenge.domain.model.SearchId;
 import com.ian.challenge.domain.model.SearchRecord;
-import com.ian.challenge.domain.port.in.GetSearchCountUseCase;
+import com.ian.challenge.application.port.in.GetSearchCountUseCase;
 import com.ian.challenge.domain.port.out.SearchRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -11,6 +11,9 @@ spring:
     username: ${DB_USER:hotel_search}
     password: ${DB_PASSWORD:hotel_search}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
 
   jpa:
     hibernate:
@@ -35,6 +38,8 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: com.ian.challenge.infrastructure.adapter.out.kafka.message
         spring.json.value.default.type: com.ian.challenge.infrastructure.adapter.out.kafka.message.SearchAvailabilityMessage
+    listener:
+      concurrency: 3
 
 server:
   port: 8080

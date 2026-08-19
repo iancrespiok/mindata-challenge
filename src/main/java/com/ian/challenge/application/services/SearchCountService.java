@@ -3,11 +3,9 @@ package com.ian.challenge.application.services;
 import com.ian.challenge.domain.exception.SearchNotFoundException;
 import com.ian.challenge.domain.model.SearchId;
 import com.ian.challenge.domain.model.SearchRecord;
-import com.ian.challenge.domain.port.in.GetSearchCountUseCase;
+import com.ian.challenge.application.port.in.GetSearchCountUseCase;
 import com.ian.challenge.domain.port.out.SearchRepository;
-import org.springframework.stereotype.Service;
 
-@Service
 public class SearchCountService implements GetSearchCountUseCase {
     private final SearchRepository searchRepository;
 

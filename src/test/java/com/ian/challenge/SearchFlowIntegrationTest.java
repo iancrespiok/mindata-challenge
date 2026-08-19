@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(partitions = 1, topics = "hotel_availability_searches")
@@ -36,15 +37,17 @@ class SearchFlowIntegrationTest {
 
         assertThat(searchResponse.getStatusCode().value()).isEqualTo(201);
         String searchId = searchResponse.getBody().searchId();
-        assertThat(searchId).isNotBlank();
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             ResponseEntity<SearchCountResponseDTO> countResponse = restTemplate.getForEntity(
                     url("/count?searchId=" + searchId), SearchCountResponseDTO.class);
-            assertThat(countResponse.getStatusCode().value()).isEqualTo(200);
-            assertThat(countResponse.getBody().count()).isGreaterThanOrEqualTo(1L);
-            assertThat(countResponse.getBody().search().hotelId()).isEqualTo("1234aBc");
-            assertThat(countResponse.getBody().search().ages()).containsExactly(30, 29, 1, 3);
+
+            assertAll("GET /count shows that search has been persisted by Kafka consumer",
+                    () -> assertThat(countResponse.getStatusCode().value()).isEqualTo(200),
+                    () -> assertThat(countResponse.getBody().count()).isGreaterThanOrEqualTo(1L),
+                    () -> assertThat(countResponse.getBody().search().hotelId()).isEqualTo("1234aBc"),
+                    () -> assertThat(countResponse.getBody().search().ages()).containsExactly(30, 29, 1, 3)
+            );
         });
     }
 
