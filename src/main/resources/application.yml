@@ -7,10 +7,10 @@ spring:
       enabled: true
 
   datasource:
-    url: ${DB_URL:jdbc:oracle:thin:@//oracle:1521/MINDATA_CHALLENGE_DB}
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/MINDATA_CHALLENGE_DB}
     username: ${DB_USER:hotel_search}
     password: ${DB_PASSWORD:hotel_search}
-    driver-class-name: oracle.jdbc.OracleDriver
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -18,7 +18,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}

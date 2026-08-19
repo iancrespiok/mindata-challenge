@@ -23,25 +23,23 @@ services:
       timeout: 5s
       retries: 10
 
-  oracle:
-    image: gvenzl/oracle-free:23-slim
-    container_name: hotel-search-oracle
-    shm_size: '1gb'
+  postgres:
+    image: postgres:16-alpine
+    container_name: hotel-search-postgres
     ports:
-      - "1521:1521"
+      - "5432:5432"
     environment:
-      ORACLE_PASSWORD: oracle_root_pwd
-      ORACLE_DATABASE: MINDATA_CHALLENGE_DB
-      APP_USER: hotel_search
-      APP_USER_PASSWORD: hotel_search
+      POSTGRES_DB: MINDATA_CHALLENGE_DB
+      POSTGRES_USER: hotel_search
+      POSTGRES_PASSWORD: hotel_search
     healthcheck:
-      test: ["CMD", "healthcheck.sh"]
-      interval: 15s
-      timeout: 10s
+      test: ["CMD-SHELL", "pg_isready -U hotel_search -d MINDATA_CHALLENGE_DB"]
+      interval: 5s
+      timeout: 5s
       retries: 10
-      start_period: 60s
+      start_period: 10s
     volumes:
-      - oracle-data:/opt/oracle/oradata
+      - postgres-data:/var/lib/postgresql/data
 
   app:
     build:
@@ -52,14 +50,14 @@ services:
       - "8080:8080"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      DB_URL: jdbc:oracle:thin:@//oracle:1521/MINDATA_CHALLENGE_DB
+      DB_URL: jdbc:postgresql://postgres:5432/MINDATA_CHALLENGE_DB
       DB_USER: hotel_search
       DB_PASSWORD: hotel_search
     depends_on:
       kafka:
         condition: service_healthy
-      oracle:
+      postgres:
         condition: service_healthy
 
 volumes:
-  oracle-data:
+  postgres-data:

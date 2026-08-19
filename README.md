@@ -1,6 +1,7 @@
 # Hotel Search App
 
-Service to register hotel availability searches and check how many times an exact search was repeated. Built with Spring Boot 3.5 + Java 21, hexagonal architecture, Kafka to decouple the persistence, and Oracle as the database.
+Service to register hotel availability searches and check how many times an exact search was repeated. Built with Spring Boot 3.5 + Java 21, hexagonal architecture, Kafka to decouple the persistence, and Postgre
+as the database.
 
 ## Run instructions:
 
@@ -10,12 +11,12 @@ Docker and Docker compose is needed. All building process happens inside the con
 docker compose up --build
 ```
 
-This run 3 services: Oracle (port 1521), Kafka (port 9092) and the spring app (port 8080). 
+This run 3 services: Postgre (port 5432), Kafka (port 9092) and the spring app (port 8080). 
 
 To bring it down:
 ```bash
 docker compose down
-docker compose down -v   # also wipes Oracle's data
+docker compose down -v   # also wipes Postgre's database
 ```
 
 ## Endpoints:
@@ -38,7 +39,7 @@ Returns the original search and how many times it was repeated exactly (same hot
 
 ## Checking the database
 
-While docker-compose is running you can connect to Oracle DB with these credentials:
+While docker-compose is running you can connect to Postgre DB with these credentials:
 
 ```
 host: localhost
@@ -50,7 +51,7 @@ password: hotel_search
 
 Or by console:
 ```bash
-docker exec -it hotel-search-oracle sqlplus hotel_search/hotel_search@//localhost:1521/MINDATA_CHALLENGE_DB
+docker exec -it hotel-search-postgres psql -U hotel_search -d MINDATA_CHALLENGE_DB
 ```
 
 ## Architecture
